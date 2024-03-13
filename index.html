@@ -29,6 +29,7 @@
     .logo-right {
         position: absolute;
         top: 0px;
+        bottom: 70;
         width: 100px;
     }
     .logo-left {
@@ -110,14 +111,16 @@
         var workers = parseInt(document.getElementById('workers').value) || 0;
 
         var flowrate = (cropValue/irrigationValue)*landArea;
-        var pumpPower = 1000*flowrate*waterDepth;
+        var pumpPower = 9800*flowrate*waterDepth;
+        var pump_kwat_hour = (pumpPower*3600)/(1000);
+
         
         //var totalPower = cropValue + landArea + irrigationValue + waterDepth + workers;
-        var totalPower = pumpPower + workers*10;
-        var cost = (totalPower /300)*50;
+        var totalPower =parseInt((3*pump_kwat_hour) + (workers*200));
+        var cost = (totalPower /30)*10;
 
         document.getElementById('outputPower').textContent = "Total Power: " + totalPower;
-        document.getElementById('outputCost').textContent = "Cost: " + cost;
+        document.getElementById('outputCost').textContent = "cost: " + cost;
     }
 
     function updateCropValue() {
