@@ -2,15 +2,30 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="shortcut icon" href="images.png" type="image/x-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>PV Cost</title>
 <style>
     body {
         font-family: Arial, sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f8f9fa;
+        background-color: #ffffff;
     }
+    
+    
+
+    footer {
+        background-color: #1a023f;
+        color: #fff;
+        padding: 20px 0;
+        text-align: center;
+        position: relative;
+        bottom: 0;
+        width: 100%;
+    }
+
     .container {
         max-width: 800px;
         margin: 20px auto;
@@ -19,17 +34,25 @@
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         position: relative;
-    }
-    .header {
-        text-align: center;
-        font-size: 24px;
-        margin-bottom: 20px;
+    } 
+    .input-group select {
+        width: calc(100% - 18px);
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        appearance: none; /* Remove default arrow */
+        background-image: url('arrow.png'); /* Add custom arrow */
+        background-repeat: no-repeat;
+        background-position: right center;
+        background-size: 20px;
     }
     .logo-left,
     .logo-right {
         position: absolute;
         top: 0px;
-        bottom: 70;
+        height: 100px;
+        
         width: 100px;
     }
     .logo-left {
@@ -37,6 +60,10 @@
     }
     .logo-right {
         right: 10px;
+        margin-bottom: 30px;
+    }
+    .input-bar:first-of-type {
+     margin-top: 20px; /* Adjust this value as needed */
     }
     .input-group {
         margin-bottom: 15px;
@@ -44,6 +71,14 @@
     .input-group label {
         display: block;
         margin-bottom: 5px;
+        color: #1a023f;
+    }
+    .input-group input {
+        width: calc(100% - 18px);
+        padding: 8px;
+        font-size: 16px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
     }
     .input-group select, .input-group input {
         width: 100%;
@@ -64,8 +99,12 @@
 </style>
 </head>
 <body>
+    
+
 <div class="container">
-    <div class="header">PV Cost</div>
+    
+    <h1> <center>Calculate Solar Power</center> </h1>
+    
     <img src="MansouraUniversity-logo.jpg" alt="Left Logo" class="logo-left">
     <img src="images.png" alt="Right Logo" class="logo-right">
     <div class="input-group">
@@ -101,6 +140,9 @@
     <div class="output" id="outputPower">Total Power: 0</div>
     <div class="output" id="outputCost">Cost: 0</div>
 </div>
+<footer>
+    <p>&copy; 2024 Solar Calc Project - Faculty of Engineering, Mansoura University - Under Supervision of Dr. Mohamed Tawfiq</p>
+</footer>
 
 <script>
     function calculateSum() {
@@ -110,14 +152,12 @@
         var waterDepth = parseInt(document.getElementById('waterDepth').value) || 0;
         var workers = parseInt(document.getElementById('workers').value) || 0;
 
-        var flowrate = (cropValue/irrigationValue)*landArea;
-        var pumpPower = 9800*flowrate*waterDepth;
-        var pump_kwat_hour = (pumpPower*3600)/(1000);
+        var flowrate = (cropValue / irrigationValue) * landArea;
+        var pumpPower = 9800 * flowrate * waterDepth;
+        var pump_kwat_hour = pumpPower * 3600 / 1000;
 
-        
-        //var totalPower = cropValue + landArea + irrigationValue + waterDepth + workers;
-        var totalPower =parseInt((3*pump_kwat_hour) + (workers*200));
-        var cost = (totalPower /30)*10;
+        var totalPower = parseInt(3 * pump_kwat_hour + workers * 200);
+        var cost = (totalPower / 30) * 10;
 
         document.getElementById('outputPower').textContent = "Total Power: " + totalPower;
         document.getElementById('outputCost').textContent = "cost: " + cost;
