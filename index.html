@@ -117,6 +117,23 @@
         </select>
     </div>
     <div class="input-group">
+        <label for="region">Region:</label>
+        <select id="region" onchange="calculateSum()">
+            <option value="30">Select Region</option>
+            <option value="23.6964">Al-Arish</option>
+            <option value="23.0175">Port-Said</option>
+            <option value="22.4688">Al-Beheira</option>
+            <option value="22.4316">New Mansoura</option>
+
+            <option value="22.2642">Al-Dabaa</option>
+            <option value="31.4526">Asyut</option>
+            <option value="34.9959">Kom Ombo</option>
+            <option value="28.2906">Siwa</option>
+            <option value="32.1687">Halayeb and Shalatin</option>
+            <option value="28.2906">other</option>
+        </select>
+    </div>
+    <div class="input-group">
         <label for="landArea">Land Area:</label>
         <input type="number" id="landArea" placeholder="Enter land area value" min="0">
     </div>
@@ -137,8 +154,8 @@
         <label for="workers">Workers:</label>
         <input type="number" id="workers" placeholder="Enter workers value" min="0">
     </div>
-    <div class="output" id="outputPower">Total Power: 0</div>
-    <div class="output" id="outputCost">Cost: 0</div>
+    <div class="output" id="outputPower">Total Power: 0 &nbsp;&nbsp;&nbsp;kwh per month</div>
+    <div class="output" id="outputCost">Cost: 0$</div>
 </div>
 <footer>
     <p>&copy; 2024 Solar Calc Project - Faculty of Engineering, Mansoura University - Under Supervision of Dr. Mohamed Tawfiq</p>
@@ -151,16 +168,23 @@
         var irrigationValue = parseInt(document.getElementById('irrigation').value) || 0;
         var waterDepth = parseInt(document.getElementById('waterDepth').value) || 0;
         var workers = parseInt(document.getElementById('workers').value) || 0;
+        var region = parseInt(document.getElementById('region').value) || 30;
 
-        var flowrate = (cropValue / irrigationValue) * landArea;
-        var pumpPower = 9800 * flowrate * waterDepth;
-        var pump_kwat_hour = pumpPower * 3600 / 1000;
+        if (irrigationValue === 0) {
+            // If no irrigation is chosen, total power is equal to the sum of workers
+            var totalPower = workers * 200;
+        } else {
+            // Calculate total power with irrigation
+            var flowrate = (cropValue / irrigationValue) * landArea;
+            var pumpPower = 9800 * flowrate * waterDepth;
+            var pump_kwat_hour = pumpPower * 3600 / 1000;
+            var totalPower = parseInt(3 * pump_kwat_hour + workers * 200);
+        }
 
-        var totalPower = parseInt(3 * pump_kwat_hour + workers * 200);
-        var cost = (totalPower / 30) * 10;
+        var cost = parseInt((totalPower / region) * 2.2);
 
-        document.getElementById('outputPower').textContent = "Total Power: " + totalPower;
-        document.getElementById('outputCost').textContent = "cost: " + cost;
+        document.getElementById('outputPower').textContent = "Total Power: " + totalPower + " kwh per month ";
+        document.getElementById('outputCost').textContent = "Cost: " + cost + "$";
     }
 
     function updateCropValue() {
@@ -171,6 +195,7 @@
     document.getElementById('waterDepth').addEventListener('input', calculateSum);
     document.getElementById('workers').addEventListener('input', calculateSum);
 </script>
+
 
 </body>
 </html>
