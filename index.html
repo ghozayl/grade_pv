@@ -114,23 +114,29 @@
             <option value="250">Date</option>
             <option value="700">Potato</option>
             <option value="1500">Tomato</option>
+            <option value="516.285">Wheat</option>
+            <option value="526.155">Barley</option>
+            <option value="558.6">Onion</option>
+            <option value="415.59">Clover</option>
+            <option value="993.5">Watermelon</option>
+            <option value="664.545">Okra</option>
+            <option value="900">Other</option>
         </select>
     </div>
     <div class="input-group">
         <label for="region">Region:</label>
         <select id="region" onchange="calculateSum()">
-            <option value="30">Select Region</option>
+            <option value="0">Select Region</option>
             <option value="23.6964">Al-Arish</option>
             <option value="23.0175">Port-Said</option>
             <option value="22.4688">Al-Beheira</option>
             <option value="22.4316">New Mansoura</option>
-
             <option value="22.2642">Al-Dabaa</option>
             <option value="31.4526">Asyut</option>
             <option value="34.9959">Kom Ombo</option>
             <option value="28.2906">Siwa</option>
             <option value="32.1687">Halayeb and Shalatin</option>
-            <option value="28.2906">other</option>
+            <option value="28.2906">Other</option>
         </select>
     </div>
     <div class="input-group">
@@ -154,8 +160,10 @@
         <label for="workers">Workers:</label>
         <input type="number" id="workers" placeholder="Enter workers value" min="0">
     </div>
-    <div class="output" id="outputPower">Total Power: 0 &nbsp;&nbsp;&nbsp;kwh per month</div>
+    <div class="output" id="outputPower">Total Power:0  &nbsp;&nbsp;&nbsp;kwh per month</div>
+    <div class="output" id="outputPanels">panels:0 </div>
     <div class="output" id="outputCost">Cost: 0$</div>
+    
 </div>
 <footer>
     <p>&copy; 2024 Solar Calc Project - Faculty of Engineering, Mansoura University - Under Supervision of Dr. Mohamed Tawfiq</p>
@@ -163,28 +171,35 @@
 
 <script>
     function calculateSum() {
-        var cropValue = parseInt(document.getElementById('crop').value);
+        var cropValue = parseInt(document.getElementById('crop').value) || 0;
         var landArea = parseInt(document.getElementById('landArea').value) || 0;
         var irrigationValue = parseInt(document.getElementById('irrigation').value) || 0;
         var waterDepth = parseInt(document.getElementById('waterDepth').value) || 0;
         var workers = parseInt(document.getElementById('workers').value) || 0;
-        var region = parseInt(document.getElementById('region').value) || 30;
+        var region = parseFloat(document.getElementById('region').value) || 45;
 
         if (irrigationValue === 0) {
             // If no irrigation is chosen, total power is equal to the sum of workers
-            var totalPower = workers * 200;
+            var totalPower = workers * 50;
         } else {
             // Calculate total power with irrigation
             var flowrate = (cropValue / irrigationValue) * landArea;
-            var pumpPower = 9800 * flowrate * waterDepth;
-            var pump_kwat_hour = pumpPower * 3600 / 1000;
-            var totalPower = parseInt(3 * pump_kwat_hour + workers * 200);
-        }
+            var pumpPower = 9.8 * flowrate * waterDepth; //unit of power 
 
-        var cost = parseInt((totalPower / region) * 2.2);
+            var pump_kwat_hour = pumpPower * (irrigationValue / 3600);   // unit of energy
+            var totalPower = parseInt( pump_kwat_hour + workers * 90);
+        }
+        
+        var panels = parseInt(totalPower / (region*3));
+        var battery = parseInt((totalPower / 90));
+        var inverters = parseInt((battery / 2))*80;
+        var batteryCost = parseInt(battery * 250);
+
+        var cost = parseInt((panels * 50)+batteryCost+inverters);
 
         document.getElementById('outputPower').textContent = "Total Power: " + totalPower + " kwh per month ";
         document.getElementById('outputCost').textContent = "Cost: " + cost + "$";
+        document.getElementById('outputPanels').textContent = "panels: " + panels;
     }
 
     function updateCropValue() {
