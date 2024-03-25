@@ -96,6 +96,52 @@
         border: 1px solid #ccc;
         margin-bottom: 15px;
     }
+
+    .popup {
+        position: relative;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .popup .popuptext {
+        visibility: hidden;
+        width: 200px;
+        background-color: #1a023f;
+        color: white;
+        text-align: center;
+        border-radius: 6px;
+        padding: 5px;
+        position: absolute;
+        z-index: 1;
+        bottom: 150%;
+        left: 50%;
+        margin-left: -100px;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .popup .popuptext::after {
+        content: "";
+        position: relative;
+        top: 100%;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: #1a023f transparent transparent transparent;
+    }
+
+    .popup:hover .popuptext {
+        visibility: visible;
+        opacity: 1;
+    }
+
+    .question-mark {
+        color: blue;
+        cursor: pointer;
+    }
+
+   
 </style>
 </head>
 <body>
@@ -139,13 +185,27 @@
             <option value="28.2906">Other</option>
         </select>
     </div>
+    
+        
+    <div class="input-group" id="latitudeInput" style="display: none;">
+        <label for="latitude">Latitude:</label>
+        <input type="number" id="latitude" placeholder="Enter latitude value" min="0"  >
+    </div>
+
+    <div class="input-group" id="longtudeInput" style="display: none;">
+        <label for="longtude">longtude:</label>
+        <input type="number" id="longtude" placeholder="Enter longtude value" min="0"  >
+    </div>
+    
     <div class="input-group">
         <label for="landArea">Land Area:</label>
-        <input type="number" id="landArea" placeholder="Enter land area value" min="0">
+        
+       
+        <input type="number" id="landArea" placeholder="Enter land area value" min="0" >
     </div>
     <div class="input-group">
-        <label for="irrigation">Irrigation:</label>
-        <select id="irrigation" onchange="calculateSum()">
+        <!--label for="irrigation">Irrigation: <span class="tooltip" onclick="showHint()" style="color: blue;">?</span></label-->
+        <label for="irrigation" class="popup">Irrigation <span class="question-mark" onclick="showHint()">?</span>: <span class="popuptext">Hints for irrigation types:<br>Drip (>24h)<br>Sprinkler (>8h)<br>Regulated (>3h)</span></label>        <select id="irrigation" onchange="calculateSum()">
             <option value="0">None</option>
             <option value="172000">Drip (>24h)</option>
             <option value="57000">Sprinkler (>8h)</option>
@@ -178,7 +238,22 @@
         var waterDepth = parseInt(document.getElementById('waterDepth').value) || 0;
         var workers = parseInt(document.getElementById('workers').value) || 0;
         var region = parseFloat(document.getElementById('region').value) || 45;
+        var sun=region;
 
+        var region = document.getElementById('region').value;
+        if (region === "0") {
+          document.getElementById('latitudeInput').style.display = 'none';
+          document.getElementById('longtudeInput').style.display = 'none';
+
+        } else if (region === "28.2906") { // Assuming "Other" region value is "28.2906"
+            document.getElementById('latitudeInput').style.display = 'block';
+            document.getElementById('longtudeInput').style.display = 'block';
+            var sun = Math.floor(Math.random() * 6) + 20;
+           
+        } else {
+            document.getElementById('latitudeInput').style.display = 'none'; // Hide latitude input for other regions
+            document.getElementById('longtudeInput').style.display = 'none';
+        }
         if (irrigationValue === 0) {
             // If no irrigation is chosen, total power is equal to the sum of workers
             var totalPower = workers * 50;
@@ -191,7 +266,7 @@
             var totalPower = parseInt( pump_kwat_hour + workers * 90);
         }
         
-        var panels = parseInt(totalPower / (region*3));
+        var panels = parseInt(totalPower / (sun*3));
         var battery = parseInt((totalPower / 90));
         var inverters = parseInt((battery / 2))*80;
         var batteryCost = parseInt(battery * 250);
@@ -205,8 +280,12 @@
 
     function updateCropValue() {
         calculateSum();
+       
     }
-
+    function showHint() {
+        alert("Hints for irrigation types:\nDrip (>24h)\nSprinkler (>8h)\nRegulated (>3h)");
+    }
+    document.getElementById('region').addEventListener('change', calculateSum);
     document.getElementById('landArea').addEventListener('input', calculateSum);
     document.getElementById('waterDepth').addEventListener('input', calculateSum);
     document.getElementById('workers').addEventListener('input', calculateSum);
